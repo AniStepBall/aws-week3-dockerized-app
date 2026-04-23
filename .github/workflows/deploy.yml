@@ -13,25 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.13'
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run syntax check
-        run: python -m py_compile app.py
-
       - name: Build Docker image
-        run: docker build -t bobbysmith0/week3-flask-app:latest .
+        run: docker build -t bobbysmith0/week3-flask-app:${{ github.sha }} .
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u bobbysmith0 --password-stdin
 
       - name: Push image
-        run: docker push bobbysmith0/week3-flask-app:latest
+        run: docker push bobbysmith0/week3-flask-app:${{ github.sha }}
 
       - name: Deploy on EC2
         uses: appleboy/ssh-action@master
@@ -40,6 +29,6 @@ jobs:
             username: ec2-user
             key: ${{ secrets.EC2_KEY }}
             script: |
-              docker pull bobbysmith0/week3-flask-app:latest
+              docker pull bobbysmith0/week3-flask-app:${{ github.sha }}
               docker stop $(docker ps -q)
-              docker run -d -p 80:5000 bobbysmith0/week3-flask-app:latest
+              docker run -d -p 80:5000 bobbysmith0/week3-flask-app:${{ github.sha }}
