@@ -82,6 +82,21 @@ Less scalable and less automated compared to container orchestration platforms.
 
 Reused Week 2 architecture to maintain high availability and load distribution.
 
+## CI/CD Diagram
+```
+Developer pushes code
+        ↓
+GitHub Actions triggered
+        ↓
+Docker image built & tested
+        ↓
+Image pushed to Docker Hub (tagged with commit SHA)
+        ↓
+SSH into EC2 → pull latest image → restart container
+        ↓
+App live at EC2 public IP
+```
+
 
 ## Screenshots
 
@@ -98,13 +113,17 @@ Reused Week 2 architecture to maintain high availability and load distribution.
 ![Docker PS](screenshots/docker-ps.png)
 
 ## What I Learned
-Containers standardise application runtime across environments
-Docker simplifies deployment and portability
-Infrastructure shifts from “configuring servers” to “running defined workloads”
-Combining Docker with existing AWS architecture improves consistency without sacrificing availability
-
+- Containers standardise application runtime across environments
+- Docker simplifies deployment and portability
+- Infrastructure shifts from “configuring servers” to “running defined workloads”
+- Combining Docker with existing AWS architecture improves consistency without sacrificing availability
+- SSHing directly into an EC2 in a pipeline works, however it has risks:
+    - EC2 must be publicly accessible
+    - If the EC2 IP changes, the secret breaks
+    - In the long run use: **AWS ECR + ECS wityh IAM roles**
+- Docker passwords and SSH Keys are stored as GitHub secrets instead of being hardcoded in the workflow file as it allows other to use and highjack the applications
+  
 ## Future Improvements
-Integrate CI/CD pipeline for automated deployment
-Move to container orchestration (ECS or Kubernetes)
-Add health checks and container monitoring
-
+- Move to container orchestration (ECS or Kubernetes)
+- Add health checks and container monitoring
+- Replace Docker Hub with AWS ECR and use IAM roles instead of SSH keys for deployments
