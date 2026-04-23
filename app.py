@@ -1,10 +1,6 @@
 from flask import Flask
 import socket
 
-app = Flask(__name__)
-
-this is not python coding
-
 @app.route("/")
 def home():
     hostname = socket.gethostname()
