@@ -1,4 +1,4 @@
-# AWS  - Dockerized-app-aws-ec2-alb
+# Dockerized Application with Application Load Balancer
 
 ## Overview
 
